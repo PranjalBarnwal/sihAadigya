@@ -10,15 +10,26 @@ const AsurTrackerPage = () => {
   const [platform, setPlatform] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username || !platform) {
       setError('Both username and platform must be selected.');
       return;
     }
     setError('');
-    console.log('Username:', username);
-    console.log('Selected Platform:', platform);
+
+    try {
+      const response = await fetch(`/getData/${username}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result = await response.json();
+      setData(result);
+      console.log('Data received:', result);
+    } catch (error) {
+      setError('Failed to fetch data. Please try again later.');
+      console.error('Fetch error:', error);
+    }
   };
 
   return (
